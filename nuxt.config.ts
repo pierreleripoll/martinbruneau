@@ -1,15 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  render: {
-    http2: {
-      push: true,
+  ssr: true,
+  devtools: { enabled: false },
+  app: {
+    head: {
+      title: "Martin Bruneau",
+      htmlAttrs: {
+        lang: "fr",
+      },
+      charset: "utf-8",
+      viewport: "width=device-width, initial-scale=1",
     },
   },
-  image: {
-    quality: 90,
-    format: ["webp", "avif"],
-    domains: ["https://martinbruneau.s3.sbg.io.cloud.ovh.net/"],
-  },
-  devtools: { enabled: true },
-  modules: ["@nuxt/image"],
 });
