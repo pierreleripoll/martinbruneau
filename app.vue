@@ -26,6 +26,7 @@
   text-align: start;
   margin: 0 auto;
   margin-bottom: 10vh;
+  gap: 2em;
 }
 
 .header h1 {
@@ -45,7 +46,6 @@
 @media screen and (min-width: 500px) {
   .header {
     text-align: center;
-
     position: sticky;
     top: 0;
     display: flex;
