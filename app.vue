@@ -18,11 +18,12 @@
   margin-top: -8px;
   padding: 1em 2em;
   text-align: start;
+  max-width: 1500px;
+  margin: auto;
 }
 
 .header {
   justify-content: space-between;
-  max-width: 1500px;
   text-align: start;
   margin: 0 auto;
   margin-bottom: 10vh;
