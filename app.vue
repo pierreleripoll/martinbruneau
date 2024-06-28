@@ -48,7 +48,7 @@
   .header {
     text-align: center;
     position: sticky;
-    top: 0;
+    top: 8px;
     display: flex;
     flex-direction: row;
   }
