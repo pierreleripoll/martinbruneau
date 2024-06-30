@@ -3,8 +3,16 @@
     Aperçu d’une série de 64 scans et photographies collectées à Cherbourg et
     ses environs.
   </p>
-  <div class="gallery section">
-    <div v-for="image in imageData" :key="image.id" class="image">
+  <div id="gallery" class="gallery section">
+    <a
+      v-for="image in imageData"
+      :key="image.id"
+      :href="getImagePath(image.id, 'webp')"
+      :data-pswp-width="image.width"
+      :data-pswp-height="image.height"
+      target="_blank"
+      class="image"
+    >
       <picture>
         <source
           :srcset="createSrcSet(image.id, 'webp')"
@@ -24,7 +32,7 @@
           :alt="`Image ${image.id}`"
         />
       </picture>
-    </div>
+    </a>
   </div>
   <div class="contact section">
     <a href="mailto:martin.bruneau50@gmail.com" class="email-link"
@@ -42,6 +50,17 @@
 <script setup>
 import imageData from "@/assets/metadata-photos.json";
 const basePath = "https://martinbruneau.s3.sbg.io.cloud.ovh.net/optimized";
+
+import PhotoSwipeLightbox from "photoswipe/lightbox";
+import "photoswipe/style.css";
+
+onMounted(() => {
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: "#gallery a",
+    pswpModule: () => import("photoswipe"),
+  });
+  lightbox.init();
+});
 
 const getImagePath = (id, type) => `${basePath}/${id}-original.${type}`;
 const createSrcSet = (id, type) => {
