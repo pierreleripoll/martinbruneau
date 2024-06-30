@@ -7,6 +7,7 @@ const sizes = [
   { width: 1920, suffix: "1920px" },
   { width: 1080, suffix: "1080px" },
   { width: 600, suffix: "600px" },
+  { width: 400, suffix: "400px" },
 ];
 
 const originalDir = join(process.cwd(), "photos/original");
@@ -92,7 +93,7 @@ const processFormat = async (
       [format]({ quality })
       .toBuffer();
     fs.writeFileSync(outputPath, formatBuffer);
-    metadata = formatBuffer.metadata();
+    metadata = await sharp(formatBuffer).metadata();
   } else {
     const buffer = fs.readFileSync(outputPath);
     metadata = await sharp(buffer).metadata();

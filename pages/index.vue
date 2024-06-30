@@ -7,7 +7,7 @@
     <a
       v-for="image in imageData"
       :key="image.id"
-      :href="getImagePath(image.id, 'webp')"
+      :href="getImagePathWebp(image.id)"
       :data-pswp-width="image.width"
       :data-pswp-height="image.height"
       target="_blank"
@@ -16,19 +16,19 @@
       <picture>
         <source
           :srcset="createSrcSet(image.id, 'webp')"
-          sizes="(max-width: 1200px) 600px, (max-width: 1919px) 1080px, (max-width: 2500px) 1920px, 100vw"
+          sizes="(max-width: 700px) 400px, (max-width: 1200px) 600px, (max-width: 1920px) 1080px, 1920px"
           type="image/webp"
         />
         <source
           :srcset="createSrcSet(image.id, 'jpeg')"
-          sizes="(max-width: 1200px) 600px, (max-width: 1919px) 1080px, (max-width: 2500px) 1920px, 100vw"
+          sizes="(max-width: 700px) 400px, (max-width: 1200px) 600px, (max-width: 1920px) 1080px, 1920px"
           type="image/jpeg"
         />
         <img
           :loading="Number(image.id) > 2 ? 'lazy' : 'eager'"
           decoding="async"
           class="responsive-img"
-          :src="getImagePath(image.id, 'jpeg')"
+          :src="getImagePathOriginal(image.id)"
           :alt="`Image ${image.id}`"
         />
       </picture>
@@ -49,7 +49,7 @@
 
 <script setup>
 import imageData from "@/assets/metadata-photos.json";
-const basePath = "https://martinbruneau.s3.sbg.io.cloud.ovh.net/optimized";
+const basePath = "https://martinbruneau.s3.sbg.io.cloud.ovh.net";
 
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import "photoswipe/style.css";
@@ -62,10 +62,12 @@ onMounted(() => {
   lightbox.init();
 });
 
-const getImagePath = (id, type) => `${basePath}/${id}-original.${type}`;
+const getImagePathOriginal = (id) => `${basePath}/original/${id}.jpg}`;
+const getImagePathWebp = (id) => `${basePath}/optimized/${id}-original.webp`;
+
 const createSrcSet = (id, type) => {
-  return [600, 1080, 1920, 2560]
-    .map((size) => `${basePath}/${id}-${size}px.${type} ${size}w`)
+  return [400, 600, 1080, 1920]
+    .map((size) => `${basePath}/optimized/${id}-${size}px.${type} ${size}w`)
     .join(", ");
 };
 </script>
