@@ -10,8 +10,8 @@ const sizes = [
   { width: 400, suffix: "400px" },
 ];
 
-const originalDir = join(process.cwd(), "photos/original");
-const outputDir = join(process.cwd(), "photos/optimized");
+const originalDir = join(process.cwd(), "public/photos/original");
+const outputDir = join(process.cwd(), "public/photos/optimized");
 const outputDirMetadata = join(process.cwd(), "assets");
 const metadataList = [];
 
@@ -47,7 +47,7 @@ const processImages = async () => {
         filename,
         "webp",
         85,
-        imageMetadata
+        imageMetadata,
       );
       await processFormat(
         buffer,
@@ -55,7 +55,7 @@ const processImages = async () => {
         filename,
         "jpeg",
         85,
-        imageMetadata
+        imageMetadata,
       );
     }
 
@@ -68,8 +68,8 @@ const processImages = async () => {
     JSON.stringify(
       metadataList.sort((a, b) => a.id - b.id),
       null,
-      2
-    )
+      2,
+    ),
   );
   console.log("Finished processing images and metadata.");
 };
@@ -80,7 +80,7 @@ const processFormat = async (
   filename,
   format,
   quality,
-  imageMetadata
+  imageMetadata,
 ) => {
   const suffix = `${resizeOptions.width || resizeOptions.height}px`;
   const formatFilename = `${filename}-${suffix}.${format}`;
@@ -116,7 +116,7 @@ const processOriginal = async (buffer, filename, imageMetadata) => {
       .webp({ quality: 90 })
       .toBuffer();
     fs.writeFileSync(originalWebpPath, originalWebpBuffer);
-    metadata = originalWebpBuffer.metadata();
+    metadata = await sharp(originalWebpBuffer).metadata();
   } else {
     const buffer = fs.readFileSync(originalWebpPath);
     metadata = await sharp(buffer).metadata();

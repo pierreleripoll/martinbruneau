@@ -1,49 +1,244 @@
-# S3 Commands for Image Upload and Metadata Update
+# Martin Bruneau - Photography Portfolio
 
-This README provides the commands to upload images to an S3 bucket and update their metadata. These commands are tailored for use with the OVH Cloud S3-compatible storage service.
+A Nuxt 3 photography portfolio website with optimized image delivery via S3 (OVH Cloud).
 
-## Prerequisites
+## Quick Start
 
-- Ensure you have the AWS CLI installed and configured with the appropriate credentials.
-- Replace `s3://martinbruneau/` with your actual bucket name if it differs.
-- Replace `https://s3.sbg.io.cloud.ovh.net` with the appropriate endpoint URL for your OVH Cloud region.
+### Setup
 
-## Commands
+**First time?** See [SETUP.md](SETUP.md) for configuring AWS CLI and S3 credentials.
 
-### 1. Upload Images to S3 Bucket
-
-This command uploads all files from the local `./photos/` directory to the specified S3 bucket. The `--recursive` flag ensures that all files in the directory are included. The `--acl public-read` flag makes the files publicly accessible.
+Install dependencies:
 
 ```bash
-aws s3 cp ./photos/ s3://martinbruneau/ --recursive --endpoint-url=https://s3.sbg.io.cloud.ovh.net --acl public-read
+npm install
 ```
 
-### 2. Update Metadata of Images in S3 Bucket
-
-This command updates the metadata of all `.jpg` and `.webp` files in the specified S3 bucket. It sets the expiration date to January 1, 2034, makes the files publicly readable, and sets a cache control to maximize caching for 30 days.
+Verify your setup:
 
 ```bash
-aws s3 cp s3://martinbruneau/ s3://martinbruneau/ --exclude "*" --include "*.jpg" --include "*.webp" --recursive --metadata-directive REPLACE --expires 2034-01-01T00:00:00Z --acl public-read --cache-control max-age=2592000,public --endpoint-url=https://s3.sbg.io.cloud.ovh.net
+make setup-check
 ```
 
-## Explanation of Flags
+### Development
 
-- `--recursive`: Includes all files in the specified directory and its subdirectories.
-- `--acl public-read`: Sets the Access Control List to make the files publicly readable.
-- `--exclude "*"`: Excludes all files initially.
-- `--include "*.jpg" --include "*.webp"`: Includes only `.jpg` and `.webp` files.
-- `--metadata-directive REPLACE`: Replaces the existing metadata of the files.
-- `--expires 2034-01-01T00:00:00Z`: Sets the expiration date for the files.
-- `--cache-control max-age=2592000,public`: Sets cache control to 30 days (2592000 seconds).
+Start the development server on `http://localhost:3000`:
 
-## Additional Resources
+```bash
+npm run dev
+# or
+make dev
+```
 
+---
+
+## 📸 Updating Photos
+
+### Complete Workflow
+
+To update the website with new photos:
+
+1. **Add original photos** to `public/photos/original/` directory (JPG format recommended)
+2. **Process images** to generate optimized versions and metadata
+3. **Upload** optimized images to S3
+4. **Update** S3 metadata for caching
+
+### Using Make Commands (Recommended)
+
+```bash
+# Complete workflow (all steps at once)
+make all
+
+# Or step by step:
+make process        # Process images and generate metadata
+make upload         # Upload to S3
+make update-acl     # Update S3 cache settings
+```
+
+### Manual Steps
+
+#### 1. Process Images
+
+This generates multiple sizes (400px, 600px, 1080px, 1920px) in both WebP and JPEG formats, plus creates `assets/metadata-photos.json`:
+
+```bash
+node utils/processImages.js
+```
+
+Output:
+
+- Optimized images → `public/photos/optimized/`
+- Metadata → `assets/metadata-photos.json`
+
+#### 2. Upload to S3
+
+Upload optimized images to OVH Cloud S3:
+
+```bash
+node utils/uploadImages.js
+```
+
+#### 3. Update S3 Metadata
+
+Set proper cache control and permissions:
+
+```bash
+bash updateacl.sh
+```
+
+Or manually with AWS CLI:
+
+```bash
+aws s3 cp s3://martinbruneau/optimized/ s3://martinbruneau/optimized/ \
+  --exclude "*" --include "*.jpg" --include "*.webp" \
+  --recursive --metadata-directive REPLACE \
+  --expires 2034-01-01T00:00:00Z \
+  --acl public-read \
+  --cache-control max-age=2592000,public \
+  --endpoint-url=https://s3.sbg.io.cloud.ovh.net
+```
+
+---
+
+## 🛠 Available Make Commands
+
+```bash
+make help           # Show all available commands
+make setup-check    # Verify AWS CLI and credentials are configured
+make process        # Process images and generate metadata
+make upload         # Upload optimized images to S3
+make fetch          # Fetch original images from S3
+make update-acl     # Update S3 cache/ACL settings
+make all            # Complete workflow (process + upload + update-acl)
+make clean          # Remove optimized images
+make clean-original # Remove original images (careful!)
+make dev            # Start dev server
+make build          # Build for production
+make preview        # Preview production build
+```
+
+---
+
+## 📁 Project Structure
+
+```
+photos/
+├── original/       # Place your original photos here
+└── optimized/      # Generated optimized versions (auto-created)
+
+assets/
+└── metadata-photos.json  # Generated image metadata
+
+utils/
+├── fetchImages.js    # Fetch original images from S3
+├── processImages.js  # Generate optimized images + metadata
+└── uploadImages.js   # Upload optimized images to S3
+```
+
+---
+
+## 🌐 S3 Configuration
+
+**Bucket:** `martinbruneau`  
+**Region:** `sbg` (OVH Cloud)  
+**Endpoint:** `https://s3.sbg.io.cloud.ovh.net`  
+**CDN URL:** `https://martinbruneau.s3.sbg.io.cloud.ovh.net`
+
+### Prefixes
+
+- Original photos: `lamelancolieduhangar/` (source)
+- Optimized photos: `optimized/` (used by website)
+
+### Prerequisites
+
+- Node.js 18+
+- AWS CLI (for manual S3 operations)
+- AWS credentials configured (for OVH S3)
+
+To configure AWS CLI for OVH:
+
+```bash
+aws configure --profile ovh
+# AWS Access Key ID: [Your OVH S3 Access Key]
+# AWS Secret Access Key: [Your OVH S3 Secret Key]
+# Default region name: sbg
+# Default output format: json
+```
+
+---
+
+## 🖼 Image Processing Details
+
+### Generated Sizes
+
+For each original image, the following versions are created:
+
+| Size     | Format     | Quality |
+| -------- | ---------- | ------- |
+| 400px    | WebP, JPEG | 85      |
+| 600px    | WebP, JPEG | 85      |
+| 1080px   | WebP, JPEG | 85      |
+| 1920px   | WebP, JPEG | 85      |
+| Original | WebP only  | 90      |
+
+### Responsive Images
+
+The website uses `<picture>` elements with srcset for optimal delivery:
+
+- Mobile (<700px): 400px version
+- Tablet (700-1200px): 600px version
+- Desktop (1200-1920px): 1080px version
+- Large screens (>1920px): 1920px version
+
+WebP is prioritized with JPEG fallback for older browsers.
+
+---
+
+## 🚀 Deployment
+
+### Build for Production
+
+```bash
+npm run build
+# or
+make build
+```
+
+### Generate Static Site
+
+```bash
+npm run generate
+# or
+make generate
+```
+
+### Preview Locally
+
+```bash
+npm run preview
+# or
+make preview
+```
+
+---
+
+## 📚 Additional Resources
+
+- [Nuxt 3 Documentation](https://nuxt.com/docs/getting-started/introduction)
 - [AWS CLI Documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
-- [OVH Cloud S3-Compatible Storage](https://docs.ovh.com/gb/en/storage/s3/)
+- [OVH Cloud S3 Storage](https://docs.ovh.com/gb/en/storage/s3/)
+- [Sharp Image Processing](https://sharp.pixelplumbing.com/)
+- [PhotoSwipe Gallery](https://photoswipe.com/)
 
-By following these instructions, you can efficiently manage your image uploads and metadata updates on your OVH Cloud S3 bucket.
+---
 
-# Nuxt 3 Minimal Starter
+## 📝 Tech Stack
+
+- **Framework:** Nuxt 3
+- **Image Processing:** Sharp
+- **Gallery:** PhotoSwipe
+- **Storage:** OVH Cloud S3
+- **Formats:** WebP + JPEG
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 

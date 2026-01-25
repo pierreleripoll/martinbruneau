@@ -6,7 +6,7 @@ import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const localDir = join(__dirname, "../photos/optimized/");
+const localDir = join(__dirname, "../public/photos/optimized/");
 const uploadPrefix = "optimized/";
 
 const bucketName = "martinbruneau";
@@ -53,7 +53,7 @@ const uploadImages = async () => {
 
       await s3.send(new PutObjectCommand(params));
       console.log(
-        `Uploaded ${key} to ${bucketName} with content type ${contentType}`
+        `Uploaded ${key} to ${bucketName} with content type ${contentType}`,
       );
     }
   } catch (error) {

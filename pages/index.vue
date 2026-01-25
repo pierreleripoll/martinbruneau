@@ -1,7 +1,7 @@
 <template>
   <p class="presentation section">
-    Aperçu d’une série de 64 scans et photographies collectées à Cherbourg et
-    ses environs.
+    Aperçu d'une série photographique explorant les lieux et espaces de
+    l'enfance. Une tentative de cartographie de l'origine et des fondations.
   </p>
   <div id="gallery" class="gallery section">
     <a
@@ -49,7 +49,9 @@
 
 <script setup>
 import imageData from "@/assets/metadata-photos.json";
-const basePath = "https://martinbruneau.s3.sbg.io.cloud.ovh.net";
+const basePath = !import.meta.env.PRODUCTION
+  ? "http://localhost:3000/photos"
+  : "https://martinbruneau.s3.sbg.io.cloud.ovh.net";
 
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import "photoswipe/style.css";

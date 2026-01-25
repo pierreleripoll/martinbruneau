@@ -12,7 +12,7 @@ import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const localDir = join(__dirname, "../photos/original/");
+const localDir = join(__dirname, "../public/photos/original/");
 if (!existsSync(localDir)) {
   mkdirSync(localDir, { recursive: true });
 }
@@ -35,7 +35,7 @@ const fetchImages = async () => {
       new ListObjectsV2Command({
         Bucket: bucketName,
         Prefix: prefix,
-      })
+      }),
     );
 
     for (const obj of data.Contents) {
@@ -44,7 +44,7 @@ const fetchImages = async () => {
       const filePath = join(localDir, filename);
 
       const { Body } = await s3.send(
-        new GetObjectCommand({ Bucket: bucketName, Key: key })
+        new GetObjectCommand({ Bucket: bucketName, Key: key }),
       );
 
       // Create a file stream
