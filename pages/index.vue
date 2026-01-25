@@ -64,7 +64,9 @@
 
 <script setup>
 import imageData from "@/assets/metadata-photos.json";
-const basePath = !import.meta.env.PRODUCTION
+
+// Use production S3 by default, localhost only in dev mode
+const basePath = process.dev
   ? "http://localhost:3000/photos"
   : "https://martinbruneau.s3.sbg.io.cloud.ovh.net";
 

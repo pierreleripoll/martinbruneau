@@ -48,7 +48,8 @@ const uploadImages = async () => {
         Key: key,
         Body: buffer,
         ACL: "public-read",
-        ContentType: contentType, // Set correct content type based on file extension
+        ContentType: contentType,
+        CacheControl: "max-age=2592000,public", // 30 days cache
       };
 
       await s3.send(new PutObjectCommand(params));
