@@ -1,8 +1,11 @@
-.PHONY: help process upload update-metadata clean dev build preview check-aws check-credentials
+.PHONY: help process upload update-metadata clean dev build preview check-aws check-credentials check-fonts
 
 help: ## Show this help message
 	@echo "Available commands:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
+check-fonts: ## Check if custom fonts are installed
+	@bash check-fonts.sh
 
 check-aws: ## Check if AWS CLI is installed
 	@command -v aws >/dev/null 2>&1 || { echo "❌ AWS CLI is not installed. See SETUP.md for instructions."; exit 1; }
