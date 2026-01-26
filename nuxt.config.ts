@@ -12,5 +12,4 @@ export default defineNuxtConfig({
       viewport: "width=device-width, initial-scale=1",
     },
   },
-  css: ["~/assets/css/fonts.css"],
 });
