@@ -73,6 +73,7 @@ const basePath = process.dev
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import "photoswipe/style.css";
 
+console.log("Base path for images:", basePath);
 onMounted(() => {
   const lightbox = new PhotoSwipeLightbox({
     gallery: "#gallery a",
