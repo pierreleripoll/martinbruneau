@@ -33,10 +33,11 @@
           />
           <img
             :loading="Number(image.id) > 2 ? 'lazy' : 'eager'"
-            decoding="async"
             class="responsive-img"
             :src="getImagePathOriginal(image.id)"
             :alt="`Image ${image.id}`"
+            :width="image.width"
+            :height="image.height"
           />
         </picture>
       </a>
@@ -82,7 +83,7 @@ onMounted(() => {
   lightbox.init();
 });
 
-const getImagePathOriginal = (id) => `${basePath}/original/${id}.jpg}`;
+const getImagePathOriginal = (id) => `${basePath}/original/${id}.jpg`;
 const getImagePathWebp = (id) => `${basePath}/optimized/${id}-original.webp`;
 
 const createSrcSet = (id, type) => {
@@ -139,8 +140,8 @@ const createSrcSet = (id, type) => {
 
 .image {
   width: 100%;
-  display: flex;
-  justify-content: center;
+  display: block;
+  text-align: center;
   margin-bottom: 20px;
 }
 
@@ -149,6 +150,9 @@ const createSrcSet = (id, type) => {
   max-width: 100%;
   height: auto;
   width: auto;
+  background-color: #f0f0f0;
+  display: block;
+  margin: 0 auto;
 }
 
 .email-link {
