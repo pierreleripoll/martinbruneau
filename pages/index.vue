@@ -145,7 +145,7 @@ const createSrcSet = (id, type) => {
 }
 
 .responsive-img {
-  max-height: 85vh;
+  max-height: 90vh;
   max-width: 100%;
   height: auto;
   width: auto;
@@ -183,6 +183,17 @@ const createSrcSet = (id, type) => {
   .contact,
   .footer {
     max-width: 40vw;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .responsive-img {
+    max-height: 75vh;
+    max-width: 50vw;
+  }
+
+  .image {
+    margin-bottom: 15vh;
   }
 }
 </style>
